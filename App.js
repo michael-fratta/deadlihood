@@ -180,8 +180,8 @@ export default class App extends Component {
       this.setState({ selectedCity: responseJson.result.admin_district, postError: false }); //set postError to false as call was successful
     })
     .catch(() => {
-      Alert.alert("OOPS!", "Something went wrong!\n\nThe postcode you entered might have been blank, incomplete, or non-existent.\n\nPlease try again!"); //pops up in case postcode is incorrect
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
+      console.log('This is how many times the catch statement in getAdminDist() is run');
     })
     .finally(() => {
       this.setState({ isLoading: false });
@@ -213,8 +213,8 @@ export default class App extends Component {
       this.setState({ data: responseJson, postError: false }); //set postError to false as call was successful
     })
     .catch(() => {
-      Alert.alert("OOPS!", "Something went wrong!\n\nWe only cover England and Wales for the moment.\n\nPlease try an English or Welsh postcode instead!"); //pops up in case postcode is incorrect
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
+      console.log('This is how many times the catch statement in getData() is run');
     })
     .finally(() => {
       this.setState({ isLoading: false });
@@ -332,58 +332,76 @@ export default class App extends Component {
       
     }
 
-    else if (this.state.postState !== prevState.postState) {
+    else if (this.state.postState !== prevState.postState ) {
 
       await this.getDataEW(); // get England and Wales deaths dataset - was causing unhandled promise rejection in componentDidMount
+
       await this.setTotalDeathsEW(); // set total deaths for England and Wales dataset - was causing unhandled promise rejection in componentDidMount
 
       await this.getAdminDist(); // get admin dist name of postcode
 
-      await this.setItem(); // get item of dist name of postcode
+      if (this.state.postError === true) { //Alert if postcode is invalid
+        Alert.alert("OOPS!", "Something went wrong.\n\nYou either didn't type anything, or made a typing error.\n\nPlease try again!");
+        this.textInput.clear(); //clear postcode from TextInput
+        this.clearPostcode(); //clear postcode from state
+      }
 
-      await this.resetDeaths(); // reset totalDeaths in case new location selected
-      
-      await this.setHospital(); // set to hospital again in case new location selected (componendDidMount will not run again)
-      await this.getData(); // get the data with the relevant place of death
-      await this.setTotalDeaths(); // update the totalDeaths
+      else {
 
-      // repeat for home
-      await this.setHome();
-      await this.getData();
-      await this.setTotalDeaths();
+        await this.setItem(); // get item of dist name of postcode
+  
+        await this.resetDeaths(); // reset totalDeaths in case new location selected
+        
+        await this.setHospital(); // set to hospital again in case new location selected (componendDidMount will not run again)
+        await this.getData(); // get the data with the relevant place of death
 
-      // repeat for hospice
-      await this.setHospice();
-      await this.getData();
-      await this.setTotalDeaths();
+        if (this.state.postError === true) { //Alert if postcode is out of bounds
+          Alert.alert("OOPS!", "Something went wrong.\n\nYour postcode was within the UK, but outside of England and Wales.\n\nPlease try again!");
+          this.textInput.clear(); //clear postcode from TextInput
+          this.clearPostcode(); //clear postcode from state
+        }
 
-      // repeat for elsewhere
-      await this.setElsewhere();
-      await this.getData();
-      await this.setTotalDeaths();
-
-      // repeat for other
-      await this.setOther();
-      await this.getData();
-      await this.setTotalDeaths();
-
-      // repeat for care home
-      await this.setCareHome();
-      await this.getData();
-      await this.setTotalDeaths();
-
-      // set death rates
-      await this.setDeathRate();
-      await this.setDeathRateEW();
-
-      await this.setDeadlihood(); //set deadlihood
-     
-      await this._setInterval(); // timeout for loading gif
-
-      this.textInput.clear(); //clear postcode after being submitted
-
-      await this.clearPostcode(); //clear inputPostcode from state
-
+        else {
+          await this.setTotalDeaths(); // update the totalDeaths
+    
+          // repeat for home
+          await this.setHome();
+          await this.getData();
+          await this.setTotalDeaths();
+    
+          // repeat for hospice
+          await this.setHospice();
+          await this.getData();
+          await this.setTotalDeaths();
+    
+          // repeat for elsewhere
+          await this.setElsewhere();
+          await this.getData();
+          await this.setTotalDeaths();
+    
+          // repeat for other
+          await this.setOther();
+          await this.getData();
+          await this.setTotalDeaths();
+    
+          // repeat for care home
+          await this.setCareHome();
+          await this.getData();
+          await this.setTotalDeaths();
+    
+          // set death rates
+          await this.setDeathRate();
+          await this.setDeathRateEW();
+    
+          await this.setDeadlihood(); //set deadlihood
+         
+          await this._setInterval(); // timeout for loading gif
+    
+          this.textInput.clear(); //clear postcode after being submitted
+    
+          await this.clearPostcode(); //clear inputPostcode from state
+        }
+      }
     }
   }
 
@@ -396,7 +414,7 @@ export default class App extends Component {
 
           <Image style={styles.image} source={require('./assets/top_icon.png')}/>
           
-          <Text style={styles.titleText}>Select your area below <Tooltip height={120} width={250} popover={<Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold',}}>Must be an administrative area (e.g. council/borough) of England and Wales only. Tap return on keyboard to close dropdown menu.</Text>} backgroundColor='#a446de'>
+          <Text style={styles.titleText}>Select your area below <Tooltip height={120} width={250} popover={<Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding: 6}}>Must be an administrative area (e.g. council/borough) of England and Wales only. Tap return on keyboard to close dropdown menu.</Text>} backgroundColor='#a446de'>
                 <Image style={{width: 20, height: 20}} source={require('./assets/info_circle.png')}/>
               </Tooltip>
           </Text>
@@ -456,7 +474,7 @@ export default class App extends Component {
               }
             />
 
-              <Text style={styles.titleText}>or input a postcode <Tooltip height={120} width={250} popover={<Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold',}}>Must be a valid, full, postcode for England and Wales only. Upper/lower case and spaces aren't important.</Text>} backgroundColor='#a446de'>
+              <Text style={styles.titleText}>or input a postcode <Tooltip height={120} width={250} popover={<Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding: 6}}>Must be a valid, full, postcode for England and Wales only. Upper/lower case and spaces aren't important.</Text>} backgroundColor='#a446de'>
                 <Image style={{width: 20, height: 20}} source={require('./assets/info_circle.png')}/>
               </Tooltip>
           </Text>
