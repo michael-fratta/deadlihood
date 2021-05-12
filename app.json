@@ -1,13 +1,14 @@
 {
   "expo": {
     "name": "deadlihood_v2",
+    "description": "Version 2 of 'Deadlihood - how deadly is your neighbourhood?' includes additional features such as tooltips and a postcode lookup. All data is obtained via the ONS (Office for National Statistics) API, and calculations are run to obtain total number of deaths, as well as mortality rates. Developed for an end of degree project for a BSc Hons in Computing and IT with The Open University. Work in progress. Download Expo Go app on Android/iOS to run the app on your device. You will have to sign up for Expo on iOS, but not on Android.",
     "slug": "deadlihood_v2",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/google_play_store.png",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./assets/jump_splash.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "updates": {
@@ -21,12 +22,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/skull_icon_adaptive_smaller.png",
+        "backgroundImage": "./assets/background_icon_adaptive.png"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/google_play_store.png"
     }
   }
 }
