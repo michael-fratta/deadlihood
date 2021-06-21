@@ -114,6 +114,7 @@ export default class App extends Component {
       let deaths = await this.state.data.observations.map(function (count) {
         return count;
     });
+    console.log(deaths[deaths.length - 1].dimensions.Week.label + '<-- this is last deaths')
     let deathNum = 0;
     deathNum += parseInt(deaths[deaths.length - 1].observation); // gets current week and adds it to deathNum local variable
     deathNum += this.state.totalDeaths; // adds deathNum local variable to totalDeaths global variable
@@ -207,8 +208,8 @@ export default class App extends Component {
     .then((response) => response.json())
     .then((responseJson) => {
       responseJson.observations.sort(function(a, b) { //JSON is unsorted, so requires sorting
-        return (a.dimensions.Week.label.toUpperCase() < b.dimensions.Week.label.toUpperCase()) ? -1 :
-               (a.dimensions.Week.label.toUpperCase() > b.dimensions.Week.label.toUpperCase()) ? 1 : 0;
+        return (parseInt(a.dimensions.Week.label.slice(5)) < parseInt(b.dimensions.Week.label.slice(5))) ? -1 : //remove "Week" from label, so only number is compared
+               (parseInt(a.dimensions.Week.label.slice(5)) > parseInt(b.dimensions.Week.label.slice(5))) ? 1 : 0; //was not sorting in 'natural order'
         });
       this.setState({ data: responseJson, postError: false }); //set postError to false as call was successful
     })
@@ -330,6 +331,7 @@ export default class App extends Component {
 
       await this.clearPostcode(); //clear inputPostcode from state
       
+      // console.log(this.state.totalDeaths + '<-- these are the total deaths for searchable dropdown');
     }
 
     else if (this.state.postState !== prevState.postState ) {
@@ -400,6 +402,7 @@ export default class App extends Component {
           this.textInput.clear(); //clear postcode after being submitted
     
           await this.clearPostcode(); //clear inputPostcode from state
+          // console.log(this.state.totalDeaths + '<-- these are the total deaths for input postcode')
         }
       }
     }
