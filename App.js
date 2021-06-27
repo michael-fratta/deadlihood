@@ -114,7 +114,7 @@ export default class App extends Component {
       let deaths = await this.state.data.observations.map(function (count) {
         return count;
     });
-    console.log(deaths[deaths.length - 1].dimensions.Week.label + '<-- this is last deaths')
+
     let deathNum = 0;
     deathNum += parseInt(deaths[deaths.length - 1].observation); // gets current week and adds it to deathNum local variable
     deathNum += this.state.totalDeaths; // adds deathNum local variable to totalDeaths global variable
@@ -122,6 +122,7 @@ export default class App extends Component {
 
     let weekNum = deaths[deaths.length - 1].dimensions.Week.label; // get current week number
     this.setState({ week: weekNum }); // set current week number
+    console.log(this.state.week + " <-- this is the current week");
   }
   }
 
@@ -168,7 +169,10 @@ export default class App extends Component {
     setTimeout(() => SplashScreen.hideAsync(), 2000); // stay for 2 secs
   
     await this.getCurrentVersion(); // initialise current version endpoint for administrative area dataset to avoid null error
+    console.log(this.state.currentVersion + " <-- this is the current version of the administrative dataset");
+
     await this.getCurrentVersionEW(); // initialise current version endpoint for England and Wales dataset to avoid null error
+    console.log(this.state.currentVersionEW + " <-- this is the current version of the England and Wales dataset");
 
   }
 
@@ -182,7 +186,6 @@ export default class App extends Component {
     })
     .catch(() => {
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
-      console.log('This is how many times the catch statement in getAdminDist() is run');
     })
     .finally(() => {
       this.setState({ isLoading: false });
@@ -215,7 +218,6 @@ export default class App extends Component {
     })
     .catch(() => {
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
-      console.log('This is how many times the catch statement in getData() is run');
     })
     .finally(() => {
       this.setState({ isLoading: false });
@@ -330,8 +332,9 @@ export default class App extends Component {
       this.textInput.clear(); // clear postcode in case dropdown item is selected instead
 
       await this.clearPostcode(); //clear inputPostcode from state
+
+      console.log(this.state.selectedItem + " <-- this is the administrative area code");
       
-      // console.log(this.state.totalDeaths + '<-- these are the total deaths for searchable dropdown');
     }
 
     else if (this.state.postState !== prevState.postState ) {
@@ -402,7 +405,9 @@ export default class App extends Component {
           this.textInput.clear(); //clear postcode after being submitted
     
           await this.clearPostcode(); //clear inputPostcode from state
-          // console.log(this.state.totalDeaths + '<-- these are the total deaths for input postcode')
+
+          console.log(this.state.selectedItem + " <-- this is the administrative area code");
+
         }
       }
     }
