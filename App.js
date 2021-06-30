@@ -182,7 +182,13 @@ export default class App extends Component {
     await fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
-      this.setState({ selectedCity: responseJson.result.admin_district, postError: false }); //set postError to false as call was successful
+      // ONS subsumed the below locations in either North Northamptonshire or West Northamptonshire
+      if (responseJson.result.admin_district === "Corby" || "Daventry" || "East Northamptonshire" || "Kettering" || "Northampton" || "South Northamptonshire" || "Wellingborough") {
+        this.setState({ selectedCity: responseJson.result.nuts, postError: false}); //set postError to false as call was successful
+      }
+      else {
+        this.setState({ selectedCity: responseJson.result.admin_district, postError: false }); //set postError to false as call was successful
+      }
     })
     .catch(() => {
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
@@ -361,7 +367,7 @@ export default class App extends Component {
         await this.getData(); // get the data with the relevant place of death
 
         if (this.state.postError === true) { //Alert if postcode is out of bounds
-          Alert.alert("OOPS!", "Something went wrong.\n\nThe postcode you entered is valid, but it was either outside of England and Wales, or the ONS may have no data on your area at the moment.\n\nWe're aware that currently the ONS no longer has data for the following locations: Corby, Daventry, East Northamptonshire, Kettering, Northampton, South Northamptonshire, and Wellingborough.\nWe have been in touch with them to ask them for clarification on the matter - and hope they'll reinsert them in the dataset soon!\n\nPlease try again with a different postcode, or use the dropdown menu to get a guaranteed result!");
+          Alert.alert("OOPS!", "Something went wrong.\n\nThe postcode you entered is a valid UK postcode, but it's not within England or Wales.\n\nPlease try again with a different postcode, or use the dropdown menu to get a guaranteed result!");
           this.textInput.clear(); //clear postcode from TextInput
           this.clearPostcode(); //clear postcode from state
         }
