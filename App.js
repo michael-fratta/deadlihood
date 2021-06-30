@@ -346,7 +346,7 @@ export default class App extends Component {
       await this.getAdminDist(); // get admin dist name of postcode
 
       if (this.state.postError === true) { //Alert if postcode is invalid
-        Alert.alert("OOPS!", "Something went wrong.\n\nYou either didn't type anything, or made a typing error.\n\nPlease try again!");
+        Alert.alert("OOPS!", "Something went wrong.\n\nYou either didn't type anything, made a typing error, or used a non-UK postcode.\n\nPlease try again!");
         this.textInput.clear(); //clear postcode from TextInput
         this.clearPostcode(); //clear postcode from state
       }
@@ -361,7 +361,7 @@ export default class App extends Component {
         await this.getData(); // get the data with the relevant place of death
 
         if (this.state.postError === true) { //Alert if postcode is out of bounds
-          Alert.alert("OOPS!", "Something went wrong.\n\nYour postcode was within the UK, but outside of England and Wales.\n\nPlease try again!");
+          Alert.alert("OOPS!", "Something went wrong.\n\nThe postcode you entered is valid, but it was either outside of England and Wales, or the ONS may have no data on your area at the moment.\n\nWe're aware that currently the ONS no longer has data for the following locations: Corby, Daventry, East Northamptonshire, Kettering, Northampton, South Northamptonshire, and Wellingborough.\nWe have been in touch with them to ask them for clarification on the matter - and hope they'll reinsert them in the dataset soon!\n\nPlease try again with a different postcode, or use the dropdown menu to get a guaranteed result!");
           this.textInput.clear(); //clear postcode from TextInput
           this.clearPostcode(); //clear postcode from state
         }
