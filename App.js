@@ -256,7 +256,7 @@ export default class App extends Component {
 
   // setter for death rate of England and Wales
   async setDeathRateEW() {
-    let rate = (this.state.totalDeathsEW / 59439840 * 10000).toFixed(2); //total pop of England and Wales is hardcoded as updated yearly. Next update JUNE 2021
+    let rate = (this.state.totalDeathsEW / 59719724 * 10000).toFixed(2); //total pop of England and Wales is hardcoded as updated yearly. NEXT UPDATE SEPTEMBER 2022. See https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
     this.setState({ deathRateEW: rate });
   }
 
@@ -458,7 +458,6 @@ export default class App extends Component {
               }}
               itemsContainerStyle={{ maxWidth: '100%', }}
               items={Array} //input array here
-              //defaultIndex={'E06000001'}
               resetValue={false}
               textInputProps={
                 {
@@ -478,7 +477,6 @@ export default class App extends Component {
                       backgroundColor: '#a446de',
                       marginTop: 1,
                   },
-                  //onTextChange: text => alert(text)  DO SOMETHING
                 }
               }
               listProps={
