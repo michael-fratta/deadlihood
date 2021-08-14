@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         maxWidth: '100%',
         backgroundColor: '#a446de',
         marginTop: 5,
-        marginHorizontal: 50,
+        marginHorizontal: 25,
     },
     baseText: {
         padding: 5,
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         color: '#10c62d',
-        marginHorizontal: 10,
+        marginHorizontal: 7,
       },
     resultText: {
         padding: 5,

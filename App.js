@@ -422,10 +422,10 @@ export default class App extends Component {
   render () {
 
     return (
-
+      
       <SafeAreaView style={styles.container}>
+        <StatusBar backgroundColor = '#602883'/>
         <View style={styles.container}>
-
           <Image style={styles.image} source={require('./assets/top_icon.png')}/>
           
           <Text style={styles.titleText}>Select your area below <Tooltip height={120} width={250} popover={<Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding: 6}}>Must be an administrative area (e.g. council/borough) of England and Wales only. Tap return on keyboard to close dropdown menu.</Text>} backgroundColor='#a446de'>
@@ -521,7 +521,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
+    // marginTop: StatusBar.currentHeight || 0,
     backgroundColor: '#602883',
     alignItems: 'center',
   },
@@ -532,6 +532,7 @@ const styles = StyleSheet.create({
     color: '#10c62d',
   },
   image : {
+    marginTop: 30,
     width: 120,
     height: 120,
   },
