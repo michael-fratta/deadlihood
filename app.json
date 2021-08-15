@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/skull_icon_adaptive_smaller.png",
         "backgroundImage": "./assets/background_icon_adaptive.png"
       },
-      "package": "com.fractal_dev.deadlihood"
+      "package": "com.fractal_developments.deadlihood"
     },
     "web": {
       "favicon": "./assets/google_play_store.png"
