@@ -3,7 +3,7 @@
     "name": "Deadlihood",
     "description": "'Deadlihood - how deadly is your neighbourhood?' All data is obtained via the ONS (Office for National Statistics) API, and calculations are run to obtain total number of deaths, as well as mortality rates for all administrative areas of England and Wales. Developed for an end of degree project - module TM470 - for a BSc Hons in Computing and IT with The Open University.Download Expo Go app on Android to run the app on your device. On iOS, you'll have to sign up with Expo too, and follow this link instead: https://snack.expo.io/@mike_fratta/github.com-mikefratta-deadlihood_v2",
     "slug": "Deadlihood",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "orientation": "portrait",
     "icon": "./assets/google_play_store.png",
     "splash": {
