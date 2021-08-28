@@ -29,6 +29,11 @@
     },
     "web": {
       "favicon": "./assets/google_play_store.png"
+    },
+    "androidNavigationBar": {
+      "visible": "leanback",
+      "barStyle": "dark-content",
+      "backgroundColor": "#a446de"
     }
   }
 }
