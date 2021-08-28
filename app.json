@@ -31,9 +31,10 @@
       "favicon": "./assets/google_play_store.png"
     },
     "androidNavigationBar": {
-      "visible": "leanback",
-      "barStyle": "dark-content",
-      "backgroundColor": "#a446de"
+      "backgroundColor": "#612886"
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#612886"
     }
   }
 }
