@@ -428,8 +428,18 @@ export default class App extends Component {
         <View style={styles.container}>
           <Image style={styles.image} source={require('./assets/top_icon.png')}/>
           
-          <Text style={styles.titleText}>Select your area below <Tooltip height={120} width={250} popover={<Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding: 6}}>Must be an administrative area (e.g. council/borough) of England and Wales only. Tap return on keyboard to close dropdown menu.</Text>} backgroundColor='#a446de'>
-                <Image style={{width: 20, height: 20}} source={require('./assets/info_circle.png')}/>
+          <Text style={styles.titleText}>Select your area below
+          <Tooltip
+                height={120}
+                width={250}
+                backgroundColor='#a446de'
+                skipAndroidStatusBar={true}
+                popover={
+                  <Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding:10}}>
+                    Search by administrative area of England and Wales only - e.g. your council or borough.{"\n"}Tap return on your keyboard to close the dropdown menu.
+                  </Text>}
+                >
+                <Image style={{width: 20, height: 20, marginLeft: 4}} source={require('./assets/info_circle.png')}/>
               </Tooltip>
           </Text>
         
@@ -486,8 +496,18 @@ export default class App extends Component {
               }
             />
 
-              <Text style={styles.titleText}>or input a postcode <Tooltip height={120} width={250} popover={<Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding: 6}}>Must be a valid, full, postcode for England and Wales only. Upper/lower case and spaces aren't important.</Text>} backgroundColor='#a446de'>
-                <Image style={{width: 20, height: 20}} source={require('./assets/info_circle.png')}/>
+            <Text style={styles.titleText}>or input a postcode
+              <Tooltip
+                height={60}
+                width={250}
+                backgroundColor={'#a446de'}
+                skipAndroidStatusBar={true}
+                popover={
+                  <Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding:10}}>
+                    Please input a full postcode for either England or Wales only.
+                  </Text>}
+                >
+                <Image style={{width: 20, height: 20, marginLeft: 4}} source={require('./assets/info_circle.png')}/>
               </Tooltip>
           </Text>
             <TextInput
@@ -530,9 +550,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     color: '#10c62d',
+    marginBottom: 5,
   },
   image : {
-    marginTop: 30,
+    marginTop: 20,
     width: 120,
     height: 120,
   },
