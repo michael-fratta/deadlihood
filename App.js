@@ -498,8 +498,8 @@ export default class App extends Component {
 
             <Text style={styles.titleText}>or input a postcode
               <Tooltip
-                height={90}
-                width={250}
+                height={80}
+                width={255}
                 backgroundColor={'#a446de'}
                 skipAndroidStatusBar={true}
                 popover={
