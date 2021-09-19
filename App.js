@@ -182,13 +182,8 @@ export default class App extends Component {
     await fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
-      // ONS subsumed the below locations in either North Northamptonshire or West Northamptonshire
-      if (responseJson.result.admin_district === "Corby" || "Daventry" || "East Northamptonshire" || "Kettering" || "Northampton" || "South Northamptonshire" || "Wellingborough") {
-        this.setState({ selectedCity: responseJson.result.nuts, postError: false}); //set postError to false as call was successful
-      }
-      else {
         this.setState({ selectedCity: responseJson.result.admin_district, postError: false }); //set postError to false as call was successful
-      }
+        console.log(this.state.selectedCity)
     })
     .catch(() => {
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
