@@ -26,8 +26,9 @@ export default class PostLoader extends Component {
                         <Text style={styles.resultText}> {this.props.totalDeaths} deaths</Text>
                     </Text>
                     <Text style={styles.baseText}>
-                        giving it a mortality rate (per 10,000 people) of 
+                        giving it a mortality rate of 
                         <Text style={styles.resultText}> {this.props.deathRate} </Text>
+                        (per 10,000 people)
                     </Text>
                     <Text style={styles.baseText}>
                         making it 
@@ -39,8 +40,9 @@ export default class PostLoader extends Component {
                         <Text style={styles.resultText}> {this.props.totalDeathsEW} deaths</Text>
                     </Text>
                     <Text style={styles.baseText}>
-                        and a mortality rate (per 10,000 people) of 
-                        <Text style={styles.resultText}> {this.props.deathRateEW}</Text>
+                        and a mortality rate of 
+                        <Text style={styles.resultText}> {this.props.deathRateEW} </Text>
+                        (per 10,000 people)
                     </Text>
                     <Text style={styles.footerText}>
                         *{this.props.week} of 52.

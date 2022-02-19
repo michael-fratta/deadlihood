@@ -41,7 +41,7 @@ export default class App extends Component {
 
   // getter for current version of weekly deaths per administrative area dataset. Executed at runtime to avoid null error
   async getCurrentVersion() {
-    const url = 'https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-local-authority/editions/2021/versions';
+    const url = 'https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-local-authority/editions/2022/versions';
     await fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -132,13 +132,14 @@ export default class App extends Component {
       return count
     });
     let total = 0;
-    for (let i = 0; i < mapped.length; i++) {
-      if (mapped[i].observation === "") {
-        total = parseInt(mapped[i-1].observation);
-        break
-      }
+    i = 0;
+    while (mapped[i].observation !== "") {
+      //console.log(mapped[i].observation);
+      total = parseInt(mapped[i].observation);
+      i = i+1;
     }
     this.setState({ totalDeathsEW: total });
+    console.log(this.state.totalDeathsEW);
   }
 
   // reset totalDeaths back to 0
@@ -207,7 +208,7 @@ export default class App extends Component {
 
   // getter for weekly deaths of chosen administrative area dataset
   async getData() {
-    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-local-authority/editions/2021/versions/${this.state.currentVersion}/observations?time=2021&geography=${this.state.selectedItem}&week=*&causeofdeath=all-causes&placeofdeath=${this.state.placeOfDeath}&registrationoroccurrence=occurrences`;
+    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-local-authority/editions/2022/versions/${this.state.currentVersion}/observations?time=2022&geography=${this.state.selectedItem}&week=*&causeofdeath=all-causes&placeofdeath=${this.state.placeOfDeath}&registrationoroccurrence=occurrences`;
     await fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -216,6 +217,7 @@ export default class App extends Component {
                (parseInt(a.dimensions.Week.label.slice(5)) > parseInt(b.dimensions.Week.label.slice(5))) ? 1 : 0; //was not sorting in 'natural order'
         });
       this.setState({ data: responseJson, postError: false }); //set postError to false as call was successful
+      console.log(this.state.data);
     })
     .catch(() => {
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
@@ -227,15 +229,16 @@ export default class App extends Component {
 
   // getter for weekly deaths of England and Wales dataset
   async getDataEW() {
-    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-age-sex/editions/covid-19/versions/${this.state.currentVersionEW}/observations?time=2021&geography=K04000001&week=*&sex=all&agegroups=all-ages&deaths=total-registered-deaths`;
+    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-age-sex/editions/covid-19/versions/${this.state.currentVersionEW}/observations?time=2022&geography=K04000001&week=*&sex=all&agegroups=all-ages&deaths=total-registered-deaths`;
     await fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
       responseJson.observations.sort(function(a, b) { //JSON is unsorted, so requires sorting
-        return (a.dimensions.Week.label.toUpperCase() < b.dimensions.Week.label.toUpperCase()) ? -1 :
-               (a.dimensions.Week.label.toUpperCase() > b.dimensions.Week.label.toUpperCase()) ? 1 : 0;
+        return (parseInt(a.dimensions.Week.label.slice(5)) < parseInt(b.dimensions.Week.label.slice(5))) ? -1 : //remove "Week" from label, so only number is compared
+               (parseInt(a.dimensions.Week.label.slice(5)) > parseInt(b.dimensions.Week.label.slice(5))) ? 1 : 0; //was not sorting in 'natural order'
         });
       this.setState({ dataEW: responseJson });
+      //console.log(this.state.dataEW);
     })
     .catch((error) => console.error(error))
     .finally(() => {
