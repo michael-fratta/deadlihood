@@ -153,7 +153,7 @@ export default class App extends Component {
       this.setState({
         loading: false
       });
-    }, 3000);
+    }, 5000); // run for 5 secs
   }
   
   // to stop endless gif loop if same location is selected
@@ -167,7 +167,7 @@ export default class App extends Component {
   async componentDidMount() {
     
     SplashScreen.preventAutoHideAsync(); // prevent splashscreen from hiding automatically
-    setTimeout(() => SplashScreen.hideAsync(), 2000); // stay for 2 secs
+    setTimeout(() => SplashScreen.hideAsync(), 3000); // stay for 3 secs
   
     await this.getCurrentVersion(); // initialise current version endpoint for administrative area dataset to avoid null error
     console.log(this.state.currentVersion + " <-- this is the current version of the administrative dataset");
