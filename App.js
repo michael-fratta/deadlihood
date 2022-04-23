@@ -1,5 +1,5 @@
 import React, { Component, } from 'react';
-import { SafeAreaView, StyleSheet, StatusBar, Image, View, Text, TextInput, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, StatusBar, Image, View, Text, TextInput, Alert, TouchableHighlight, ScrollView } from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import * as SplashScreen from 'expo-splash-screen';
 import PreLoader from './assets/PreLoader.js';
@@ -8,9 +8,12 @@ import { Tooltip } from 'react-native-elements';
 import Array from './assets/geoName_arr.js';
 import Dictionary from './assets/geoPop_dict.js';
 import Dictionary2 from './assets/geoName_dict.js';
+import NetInfo from "@react-native-community/netinfo";
 
 
 export default class App extends Component {
+
+  NetInfoSubscription = null; 
 
   constructor(props) {
     super(props);
@@ -26,6 +29,7 @@ export default class App extends Component {
       totalDeaths: 0, // holds total deaths
       deathRate: 0, // holds death rate for given location
       totalDeathsEW: 0, // holds total weekly deaths for whole EW
+      stringDeathsEW: '', // holds totalDeathsEW stringified with commas
       deathRateEW: 0, // holds death rate for whole EW
       deadlihood: 0, // holds deadlihood
       loading: false, // holds boolean for loading state
@@ -36,12 +40,29 @@ export default class App extends Component {
       postState: 0, //counter so state updates if same postcode is input
       dropState: 0, //counter to prevent both conditions within componentDidUpdate to run simultaneously when postcode is first input
       postError: false, //handle incorrect postcode
+      pressStatus: false, // for top_icon press status
+      buttonPressed: true, // for press status of top_icon to control PostLoader
+      currentYear: 0, // initialise the current Year
+      connection_status: false, // initialise connection status to false
     };
+  }
+
+  // to handle press status of top_icon
+  _onHideUnderlay() {
+    this.setState({ pressStatus: false });
+  }
+  _onShowUnderlay() {
+    this.setState({ pressStatus: true });
+  }
+
+  async getCurrentYear() {
+    let curr = new Date().getFullYear()
+    this.setState({ currentYear: curr });
   }
 
   // getter for current version of weekly deaths per administrative area dataset. Executed at runtime to avoid null error
   async getCurrentVersion() {
-    const url = 'https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-local-authority/editions/2022/versions';
+    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-local-authority/editions/${this.state.currentYear}/versions`;
     await fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -134,12 +155,11 @@ export default class App extends Component {
     let total = 0;
     i = 0;
     while (mapped[i].observation !== "") {
-      //console.log(mapped[i].observation);
       total = parseInt(mapped[i].observation);
       i = i+1;
     }
+    this.setState({ stringDeathsEW: total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")});
     this.setState({ totalDeathsEW: total });
-    console.log(this.state.totalDeathsEW);
   }
 
   // reset totalDeaths back to 0
@@ -165,6 +185,12 @@ export default class App extends Component {
 
   // initial screen - executed at runtime
   async componentDidMount() {
+
+    this.NetInfoSubscription = NetInfo.addEventListener(
+      this._handleConnectivityChange
+    );
+
+    await this.getCurrentYear(); // get current year
     
     SplashScreen.preventAutoHideAsync(); // prevent splashscreen from hiding automatically
     setTimeout(() => SplashScreen.hideAsync(), 3000); // stay for 3 secs
@@ -175,6 +201,13 @@ export default class App extends Component {
     await this.getCurrentVersionEW(); // initialise current version endpoint for England and Wales dataset to avoid null error
     console.log(this.state.currentVersionEW + " <-- this is the current version of the England and Wales dataset");
 
+    console.log(this.state.connection_status + " <-- this is the connection status in componentDidMount");
+
+  }
+
+  _handleConnectivityChange = (state) => {
+    this.setState({connection_status : state.isInternetReachable });
+    console.log(this.state.connection_status + " <-- this is the connection status in _handleConnectivityChange");
   }
 
   // getter for administrative area by postcode
@@ -184,7 +217,6 @@ export default class App extends Component {
     .then((response) => response.json())
     .then((responseJson) => {
         this.setState({ selectedCity: responseJson.result.admin_district, postError: false }); //set postError to false as call was successful
-        console.log(this.state.selectedCity)
     })
     .catch(() => {
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
@@ -208,7 +240,7 @@ export default class App extends Component {
 
   // getter for weekly deaths of chosen administrative area dataset
   async getData() {
-    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-local-authority/editions/2022/versions/${this.state.currentVersion}/observations?time=2022&geography=${this.state.selectedItem}&week=*&causeofdeath=all-causes&placeofdeath=${this.state.placeOfDeath}&registrationoroccurrence=occurrences`;
+    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-local-authority/editions/${this.state.currentYear}/versions/${this.state.currentVersion}/observations?time=${this.state.currentYear}&geography=${this.state.selectedItem}&week=*&causeofdeath=all-causes&placeofdeath=${this.state.placeOfDeath}&registrationoroccurrence=registrations`;
     await fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -217,7 +249,6 @@ export default class App extends Component {
                (parseInt(a.dimensions.Week.label.slice(5)) > parseInt(b.dimensions.Week.label.slice(5))) ? 1 : 0; //was not sorting in 'natural order'
         });
       this.setState({ data: responseJson, postError: false }); //set postError to false as call was successful
-      console.log(this.state.data);
     })
     .catch(() => {
       this.setState({ postError: true }); //set postError to true as call was unsuccessful
@@ -229,7 +260,7 @@ export default class App extends Component {
 
   // getter for weekly deaths of England and Wales dataset
   async getDataEW() {
-    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-age-sex/editions/covid-19/versions/${this.state.currentVersionEW}/observations?time=2022&geography=K04000001&week=*&sex=all&agegroups=all-ages&deaths=total-registered-deaths`;
+    const url = `https://api.beta.ons.gov.uk/v1/datasets/weekly-deaths-age-sex/editions/covid-19/versions/${this.state.currentVersionEW}/observations?time=${this.state.currentYear}&geography=K04000001&week=*&sex=all&agegroups=all-ages&deaths=total-registered-deaths`;
     await fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -238,7 +269,6 @@ export default class App extends Component {
                (parseInt(a.dimensions.Week.label.slice(5)) > parseInt(b.dimensions.Week.label.slice(5))) ? 1 : 0; //was not sorting in 'natural order'
         });
       this.setState({ dataEW: responseJson });
-      //console.log(this.state.dataEW);
     })
     .catch((error) => console.error(error))
     .finally(() => {
@@ -266,7 +296,7 @@ export default class App extends Component {
       this.setState({ stringlihood: percentage + '% more' });
     }
     else {
-      this.setState({ stringlihood: percentage + '% less' });
+      this.setState({ stringlihood: percentage + '% fewer' });
     }
   }
 
@@ -290,6 +320,8 @@ export default class App extends Component {
     this.setIntervalIfTrue(); // to stop endless loader loop if same location is selected
 
     if (this.state.dropState !== prevState.dropState) {
+
+      this.setState({buttonPressed:false}) // set button pressed to false after state change
 
       await this.getDataEW(); // get England and Wales deaths dataset - was causing unhandled promise rejection in componentDidMount
       await this.setTotalDeathsEW(); // set total deaths for England and Wales dataset - was causing unhandled promise rejection in componentDidMount
@@ -343,16 +375,24 @@ export default class App extends Component {
 
     else if (this.state.postState !== prevState.postState ) {
 
+      this.setState({buttonPressed:false}); // set button pressed to false after state is changed
+
       await this.getDataEW(); // get England and Wales deaths dataset - was causing unhandled promise rejection in componentDidMount
 
       await this.setTotalDeathsEW(); // set total deaths for England and Wales dataset - was causing unhandled promise rejection in componentDidMount
 
       await this.getAdminDist(); // get admin dist name of postcode
 
-      if (this.state.postError === true) { //Alert if postcode is invalid
-        Alert.alert("OOPS!", "Something went wrong.\n\nYou either didn't type anything, made a typing error, or used a non-UK postcode.\n\nPlease try again!");
+      if (this.state.postError === true && this.state.connection_status === true) { //Alert if postcode is invalid (and device is connected)
+        Alert.alert("OOPS!", "Something went wrong.\n\nYou either didn't type anything, made a mistake, or used a postcode from a country other than the UK.\n\nPlease try again!");
         this.textInput.clear(); //clear postcode from TextInput
         this.clearPostcode(); //clear postcode from state
+      }
+
+      else if (this.state.postError === true && this.state.connection_status === false) {
+        // just clear poscode from textinput and state, if postcode was wrong previously and cthere is no connection
+        this.textInput.clear();
+        this.clearPostcode();
       }
 
       else {
@@ -364,8 +404,8 @@ export default class App extends Component {
         await this.setHospital(); // set to hospital again in case new location selected (componendDidMount will not run again)
         await this.getData(); // get the data with the relevant place of death
 
-        if (this.state.postError === true) { //Alert if postcode is out of bounds
-          Alert.alert("OOPS!", "Something went wrong.\n\nThe postcode you entered is a valid UK postcode, but it's not within England or Wales.\n\nPlease try again with a different postcode, or use the dropdown menu to get a guaranteed result!");
+        if (this.state.postError === true && this.state.connection_status === true) { //Alert if postcode is out of bounds (and device is connected)
+          Alert.alert("OOPS!", "Something went wrong.\n\nThe postcode you entered is a valid UK postcode, but it's not within England or Wales.\n\nPlease try again with a different postcode, or use the dropdown menu for a guaranteed result!");
           this.textInput.clear(); //clear postcode from TextInput
           this.clearPostcode(); //clear postcode from state
         }
@@ -420,20 +460,27 @@ export default class App extends Component {
   render () {
 
     return (
-      
       <SafeAreaView style={styles.container}>
         <StatusBar backgroundColor = '#602883'/>
-        <View style={styles.container}>
-          <Image style={styles.image} source={require('./assets/top_icon.png')}/>
+        <View style={styles.container}> 
+          <TouchableHighlight
+            onPress={()=>{this.setState({buttonPressed:true})}}
+            activeOpacity={1}
+            style={this.state.pressStatus ? styles.imagePress : styles.image}
+            onHideUnderlay={this._onHideUnderlay.bind(this)}
+            onShowUnderlay={this._onShowUnderlay.bind(this)}
+          >
+            <Image style={this.state.pressStatus ? styles.imagePress : styles.image} source={require('./assets/top_icon.png')}/>
+          </TouchableHighlight>
           
-          <Text style={styles.titleText}>Select your area below
+          <Text style={styles.titleText}>Select an area below
           <Tooltip
                 height={140}
                 width={250}
                 backgroundColor='#a446de'
                 skipAndroidStatusBar={true}
                 popover={
-                  <Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding:10}}>
+                  <Text style={styles.toolText}>
                     Search by administrative area of England and Wales only - e.g. your council or borough.{"\n"}Tap return on your keyboard to close the dropdown menu.
                   </Text>}
                 >
@@ -464,16 +511,19 @@ export default class App extends Component {
                 fontSize: 16,
                 fontWeight: 'bold',
               }}
-              itemsContainerStyle={{ maxWidth: '100%', }}
+              itemsContainerStyle={{ maxWidth: '100%' }}
               items={Array} //input array here
               resetValue={false}
               textInputProps={
                 {
-                  placeholder: "search your location",
+                  placeholder: "search for a location",
                   underlineColorAndroid: "transparent",
                   placeholderTextColor: '#4fff6b',
                   color: '#10c62d',
                   fontSize: 16,
+                  textShadowColor: 'black',
+                  textShadowRadius: 10,
+                  fontWeight: 'bold',
   
                   style: {
                       padding: 12,
@@ -490,18 +540,19 @@ export default class App extends Component {
               listProps={
                 {
                   nestedScrollEnabled: true,
+                  keyboardDismissMode:'on-drag',
                 }
               }
             />
 
-            <Text style={styles.titleText}>or input a postcode
+            <Text style={styles.subText}>or input a postcode
               <Tooltip
                 height={80}
                 width={255}
                 backgroundColor={'#a446de'}
                 skipAndroidStatusBar={true}
                 popover={
-                  <Text style={{color:'#4fff6b', fontSize: 14, fontWeight: 'bold', padding:10}}>
+                  <Text style={styles.toolText}>
                     Please input a full postcode for either England or Wales only.
                   </Text>}
                 >
@@ -526,8 +577,8 @@ export default class App extends Component {
               color= '#10c62d'
               autoCompleteType= 'postal-code'
             />
-
-            <PostLoader {...this.state}/>
+            {this.state.buttonPressed == true? null: <PostLoader {...this.state}/>}
+            
             <PreLoader preLoaderVisible={this.state.loading}/>
   
         </View>
@@ -539,7 +590,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // marginTop: StatusBar.currentHeight || 0,
+    //marginTop: StatusBar.currentHeight || 0,
     backgroundColor: '#602883',
     alignItems: 'center',
   },
@@ -549,13 +600,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#10c62d',
     marginBottom: 5,
+    paddingTop:25,
+    textShadowColor: 'black',
+    textShadowRadius: 10,
   },
-  image : {
+  subText: {
+    fontSize: 20,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#10c62d',
+    marginBottom: 5,
+    paddingTop:5,
+    textShadowColor: 'black',
+    textShadowRadius: 10,
+  },
+  image: {
     marginTop: 20,
     width: 120,
     height: 120,
   },
-
+  imagePress: {
+    width: 130,
+    height: 130,
+  },
   input: {
     height: 55,
     margin: 12,
@@ -570,6 +637,17 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 16,
     marginBottom: 10,
+    textShadowColor: 'black',
+    textShadowRadius: 10,
+    fontWeight: 'bold',
+  },
+  toolText: {
+    color:'#4fff6b',
+    fontSize: 14,
+    fontWeight: 'bold',
+    padding: 10,
+    textShadowColor: 'black',
+    textShadowRadius: 10,
   },
 
 });
