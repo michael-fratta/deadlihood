@@ -4,4 +4,4 @@ Initially developed for an end of degree project - module TM470 - for a BSc Hons
 
 Now available on Google Play! --> https://play.google.com/store/apps/details?id=com.fractal_developments.deadlihood&gl=GB
 
-For iOS, and in-browser emulation for both platforms (although it can take a while and be very choppy - depending on the amount of traffic) go to the following Snack: https://snack.expo.dev/@mike_fratta/github.com-mikefratta-deadlihood_v2. It runs better if you download Expo Go, instead of running it in a browser, here: https://apps.apple.com/us/app/expo-go/id982107779
+Try it on iOS and web (though not optimised for either) here: https://snack.expo.dev/@mike_fratta/github.com-mikefratta-deadlihood_v2
