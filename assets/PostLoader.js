@@ -271,6 +271,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textShadowColor: 'grey',
         textShadowRadius: 10,
+        padding: 5,
     },
     clearText: {
         fontSize: 14,
