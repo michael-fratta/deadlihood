@@ -35,7 +35,7 @@ export default class PostLoader extends Component {
 
         const { modalVisible } = this.state;
 
-        if (this.props.selectedItem !== '' && this.props.postError === false && this.props.connection_status === true && this.props.stringlihood !== '') { //only run below code if selectedItem and stringlihood is not blank and postcode is correct and phone has working connection
+        if (this.props.selectedItem !== '' && this.props.postError === false && this.props.connection_status === true && this.props.stringlihood !== '' && this.props.selectedItem != undefined) { //only run below code if selectedItem and stringlihood is not blank and postcode is correct and phone has working connection
 
             return(
                 <ScrollView contentContainerstyle={styles.contentContainer}>
