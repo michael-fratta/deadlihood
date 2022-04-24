@@ -1,5 +1,5 @@
 import React, { Component, } from 'react';
-import { SafeAreaView, StyleSheet, StatusBar, Image, View, Text, TextInput, Alert, TouchableHighlight, ScrollView } from 'react-native';
+import { SafeAreaView, StyleSheet, StatusBar, Image, View, Text, TextInput, Alert, TouchableHighlight } from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import * as SplashScreen from 'expo-splash-screen';
 import PreLoader from './assets/PreLoader.js';
@@ -296,7 +296,7 @@ export default class App extends Component {
       this.setState({ stringlihood: percentage + '% more' });
     }
     else {
-      this.setState({ stringlihood: percentage + '% fewer' });
+      this.setState({ stringlihood: percentage + '% less' });
     }
   }
 

@@ -45,8 +45,8 @@ export default class PostLoader extends Component {
                         ~ {this.props.selectedCity} ~
                     </Text>
                     <Text style={styles.baseText}>
-                        had
-                        <Text style={styles.resultText}> {this.props.stringlihood} deaths </Text>
+                        was
+                        <Text style={styles.resultText}> {this.props.stringlihood} deadly </Text>
                         than England and Wales as a whole, this week*
                         <Text style={styles.resultText}> {endOfWeek} </Text>
                     </Text>
@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         color: 'black',
-        //backgroundColor: '#8137af',
         textShadowColor: 'grey',
         textShadowRadius: 10,
     },
@@ -291,7 +290,7 @@ const styles = StyleSheet.create({
         color: '#10c62d',
         fontWeight: 'bold',
         textShadowColor: 'black',
-        textShadowRadius: 15,
+        textShadowRadius: 10,
         marginBottom: 10,
         marginTop: 10,
     },
