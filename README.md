@@ -4,4 +4,4 @@ Initially developed for an end of degree project - module TM470 - for a BSc Hons
 
 Now available on Google Play! --> https://play.google.com/store/apps/details?id=com.fractal_developments.deadlihood&gl=GB
 
-Try it an in-browser emulator here: https://snack.expo.dev/@mike_fratta/github.com-mikefratta-deadlihood_v2
+Try it through an in-browser emulator here: https://snack.expo.dev/@mike_fratta/github.com-mikefratta-deadlihood_v2
