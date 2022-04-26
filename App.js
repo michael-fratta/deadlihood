@@ -44,6 +44,7 @@ export default class App extends Component {
       buttonPressed: true, // for press status of top_icon to control PostLoader
       currentYear: 0, // initialise the current Year
       connection_status: false, // initialise connection status to false
+      connection_reachable: false, // initialise connection reachable to false
     };
   }
 
@@ -201,13 +202,18 @@ export default class App extends Component {
     await this.getCurrentVersionEW(); // initialise current version endpoint for England and Wales dataset to avoid null error
     console.log(this.state.currentVersionEW + " <-- this is the current version of the England and Wales dataset");
 
-    console.log(this.state.connection_status + " <-- this is the connection status in componentDidMount");
+    console.log(this.state.connection_status + " <-- this is connection_status in componentDidMount");
+    console.log(this.state.connection_reachable + " <-- this is connection_reachable in componentDidMount")
 
   }
 
   _handleConnectivityChange = (state) => {
-    this.setState({connection_status : state.isInternetReachable });
-    console.log(this.state.connection_status + " <-- this is the connection status in _handleConnectivityChange");
+    this.setState({
+      connection_status : state.isConnected,
+      connection_reachable : state.isInternetReachable
+    });
+    console.log(this.state.connection_status + " <-- this is connection_status in _handleConnectivityChange");
+    console.log(this.state.connection_reachable + " <-- this is connection_reachable in _handleConnectivityChange")
   }
 
   // getter for administrative area by postcode
@@ -383,13 +389,13 @@ export default class App extends Component {
 
       await this.getAdminDist(); // get admin dist name of postcode
 
-      if (this.state.postError === true && this.state.connection_status === true) { //Alert if postcode is invalid (and device is connected)
+      if (this.state.postError === true && this.state.connection_status === true && this.state.connection_reachable === true) { //Alert if postcode is invalid (and device is connected)
         Alert.alert("OOPS!", "Something went wrong.\n\nYou either didn't type anything, made a mistake, or used a postcode from a country other than the UK.\n\nPlease try again!");
         this.textInput.clear(); //clear postcode from TextInput
         this.clearPostcode(); //clear postcode from state
       }
 
-      else if (this.state.postError === true && this.state.connection_status === false) {
+      else if (this.state.postError === true && this.state.connection_status === false && this.state.connection_reachable === false) {
         // just clear poscode from textinput and state, if postcode was wrong previously and cthere is no connection
         this.textInput.clear();
         this.clearPostcode();
@@ -404,7 +410,7 @@ export default class App extends Component {
         await this.setHospital(); // set to hospital again in case new location selected (componendDidMount will not run again)
         await this.getData(); // get the data with the relevant place of death
 
-        if (this.state.postError === true && this.state.connection_status === true) { //Alert if postcode is out of bounds (and device is connected)
+        if (this.state.postError === true && this.state.connection_status === true && this.state.connection_reachable === true) { //Alert if postcode is out of bounds (and device is connected)
           Alert.alert("OOPS!", "Something went wrong.\n\nThe postcode you entered is a valid UK postcode, but it's not within England or Wales.\n\nPlease try again with a different postcode, or use the dropdown menu for a guaranteed result!");
           this.textInput.clear(); //clear postcode from TextInput
           this.clearPostcode(); //clear postcode from state

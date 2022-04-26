@@ -35,7 +35,7 @@ export default class PostLoader extends Component {
 
         const { modalVisible } = this.state;
 
-        if (this.props.selectedItem !== '' && this.props.postError === false && this.props.connection_status === true && this.props.stringlihood !== '' && this.props.selectedItem != undefined) { //only run below code if selectedItem and stringlihood is not blank and postcode is correct and phone has working connection
+        if (this.props.selectedItem !== '' && this.props.postError === false && this.props.connection_status === true && this.props.connection_reachable === true && this.props.stringlihood !== '' && this.props.selectedItem != undefined) { //only run below code if selectedItem and stringlihood is not blank and postcode is correct and phone has working connection
 
             return(
                 <ScrollView contentContainerstyle={styles.contentContainer}>
@@ -144,14 +144,13 @@ export default class PostLoader extends Component {
         
         }
 
-        else if (this.props.connection_status === false) { // if device is not connected
-            console.log(this.props.connection_status + " <-- this is the connection status in missing connection");
+        else if (this.props.connection_status === false || this.props.connection_reachable === false) { // if device is not connected
             return (
                 <Text style={styles.breakText}>Your device is not connected!</Text>
             );
         }
 
-        else if (this.props.connection_status === true && this.props.postError === true) {
+        else if (this.props.connection_status === true && this.props.postError === true && this.props.connection_reachable === true) {
             return (
                 <Text style={styles.breakText}>Try again!</Text>
             );
