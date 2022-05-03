@@ -16,7 +16,7 @@ Other details:
 
 • includes internet connection status listeners for error handling
 
-• uses and combined two APIs - the ONS API and the postcodes.io API
+• uses and combines two APIs - the ONS API and the postcodes.io API
 
 • contains all-original artwork (including a GIF) - designed by myself
 
