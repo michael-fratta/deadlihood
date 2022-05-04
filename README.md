@@ -4,11 +4,11 @@ Initially developed for an end of degree project - module TM470 - for a BSc Hons
 
 Now available on Google Play! --> https://play.google.com/store/apps/details?id=com.fractal_developments.deadlihood&gl=GB
 
-Try it through an in-browser emulator here: https://snack.expo.dev/@mike_fratta/github.com-mikefratta-deadlihood_v2
+If you don't have an Android phone, you can try it through an emulator here: https://snack.expo.dev/@mike_fratta/7b064c
 
 Other details:
 
-• cross-platform (though not optimised for iOS or Web) - being it was developed using React Native; in the Expo managed workflow environment
+• developed using React Native; in the Expo managed workflow environment
 
 • requires no device permissions
 
